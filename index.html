@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heritage World Hidden Object — Find Hidden Objects &amp; Explore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: #1a0f0d;
+            background-image:
+                radial-gradient(ellipse 120% 70% at 50% -10%, rgba(201, 162, 39, 0.18), transparent 50%),
+                radial-gradient(ellipse 80% 50% at 0% 100%, rgba(139, 58, 46, 0.12), transparent 45%),
+                radial-gradient(ellipse 60% 40% at 100% 60%, rgba(90, 60, 40, 0.2), transparent 40%),
+                linear-gradient(175deg, #140a08 0%, #221510 35%, #1a0f0d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+            color: #e8dcc8;
+        }
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.55);
+        }
+
+        .texture {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .ornament-top {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(90%, 420px);
+            height: 4px;
+            z-index: 1;
+            background: linear-gradient(90deg, transparent, #b8923a, #e8d5a3, #b8923a, transparent);
+            opacity: 0.85;
+        }
+
+        .container {
+            background: linear-gradient(165deg, rgba(45, 28, 22, 0.92) 0%, rgba(26, 16, 12, 0.96) 100%);
+            border-radius: 4px;
+            border: 1px solid rgba(201, 162, 39, 0.35);
+            box-shadow:
+                0 0 0 1px rgba(255, 235, 200, 0.06) inset,
+                0 32px 80px rgba(0, 0, 0, 0.55),
+                0 0 60px rgba(139, 90, 40, 0.08);
+            max-width: 640px;
+            width: 100%;
+            padding: 48px 42px 44px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container::before,
+        .container::after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1px solid rgba(201, 162, 39, 0.45);
+            pointer-events: none;
+        }
+
+        .container::before {
+            top: 14px;
+            left: 14px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .container::after {
+            bottom: 14px;
+            right: 14px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .game-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            line-height: 1;
+            background: linear-gradient(160deg, rgba(201, 162, 39, 0.15) 0%, rgba(90, 50, 35, 0.35) 100%);
+            border: 1px solid rgba(201, 162, 39, 0.4);
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 230, 180, 0.12);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            line-height: 1.25;
+            color: #f5ecd8;
+        }
+
+        h1 .gold {
+            background: linear-gradient(105deg, #e8d5a3 0%, #c9a227 50%, #f0e4c4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            font-style: italic;
+            color: #c4b498;
+            margin-bottom: 26px;
+            letter-spacing: 0.02em;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #d4c4a8;
+            padding: 7px 12px;
+            border: 1px solid rgba(201, 162, 39, 0.35);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .description {
+            text-align: left;
+            color: #c9bba8;
+            line-height: 1.75;
+            font-size: 1.08rem;
+            margin-bottom: 28px;
+        }
+
+        .description strong {
+            color: #ebe3d4;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #c9a227;
+            text-align: left;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(201, 162, 39, 0.25);
+        }
+
+        .features {
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            color: #c9bba8;
+            padding: 10px 0 10px 28px;
+            position: relative;
+            font-size: 1.05rem;
+            line-height: 1.55;
+        }
+
+        .features li::before {
+            content: "◆";
+            position: absolute;
+            left: 0;
+            color: rgba(201, 162, 39, 0.75);
+            font-size: 0.55rem;
+            top: 1.05em;
+        }
+
+        .app-store-button {
+            display: inline-block;
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(180deg, #c9a227 0%, #8b6914 100%);
+            color: #1a0f0d;
+            padding: 16px 36px;
+            border-radius: 2px;
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            border: 1px solid rgba(255, 230, 180, 0.35);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+        }
+
+        .app-store-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+            color: #1a0f0d;
+        }
+
+        .footer {
+            margin-top: 32px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(201, 162, 39, 0.2);
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #7a6b5a;
+        }
+
+        .footer a {
+            color: #c9a227;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+            color: #e8d5a3;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.25rem; letter-spacing: 0.08em; }
+            .container { padding: 36px 24px; }
+            .game-icon { width: 88px; height: 88px; font-size: 40px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="texture" aria-hidden="true"></div>
+    <div class="ornament-top" aria-hidden="true"></div>
+
+    <div class="container">
+        <div class="game-icon" role="img" aria-label="Magnifying glass over heritage scene">🔍</div>
+        <h1><span class="gold">Heritage World</span><br>Hidden Object</h1>
+        <p class="subtitle">Find hidden objects &amp; explore historical worlds</p>
+
+        <div class="badges">
+            <span class="badge">Free</span>
+            <span class="badge">Puzzle</span>
+            <span class="badge">iPhone &amp; iPad</span>
+            <span class="badge">4+</span>
+        </div>
+
+        <div class="description">
+            <p>Discover <strong>beautifully crafted scenes</strong> across historical worlds. Search for cleverly hidden items, sharpen your observation, and enjoy a <strong>calming puzzle adventure</strong> through ancient civilizations, scenic villages, and timeless places where every detail tells a story.</p>
+        </div>
+
+        <p class="section-title">What awaits you</p>
+        <div class="features">
+            <ul>
+                <li><strong>Stunning locations</strong> — Rich visuals inspired by history and culture.</li>
+                <li><strong>Hidden object hunts</strong> — Items woven naturally into each hand-built scene.</li>
+                <li><strong>Relaxing pace</strong> — Smooth controls and satisfying, stress-free play.</li>
+                <li><strong>Growing challenge</strong> — Later scenes reward sharp eyes and patience.</li>
+                <li><strong>Progress &amp; unlocks</strong> — Complete levels to open new destinations on your journey.</li>
+            </ul>
+        </div>
+
+        <a href="https://apps.apple.com/us/app/heritage-world-hidden-object/id952673211?uo=4" class="app-store-button" target="_blank" rel="noopener noreferrer">
+            Download on the App Store
+        </a>
+
+        <div class="footer">
+            <a href="privacy.html">Privacy</a> &nbsp;·&nbsp; Heritage World Hidden Object
+        </div>
+    </div>
+</body>
+
+</html>
